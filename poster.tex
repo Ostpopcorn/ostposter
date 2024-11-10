@@ -1,5 +1,12 @@
-\documentclass[a3,2col]{ostposter}
-%\documentclass[a3,2col,centertitle,landscape]{ostposter}
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+% !TeX program = lualatex
+% !TeX TXS-program:compile = txs:///lualatex/[-shell-escape]
+
+%COMPILE WITH LUALATEX FOR THE FONTS TO WORK!
+
+\documentclass[a3,2col]{commsysposter}
+%\documentclass[a3,2col,centertitle,landscape]{commsysposter}
 
 % There are several options that can be passed to the class:
 % - a4, a3, a2, a1, a0: Sets the paper size. (default: 3col)
@@ -14,6 +21,12 @@
 
 % For old, non-UFT8, compilers.
 \usepackage[utf8]{inputenc}
+
+% These steps enable the LiU fonts.
+\usepackage[no-math]{fontspec}
+\setmainfont[Path=templateresources/,Ligatures=TeX,BoldFont=*b,UprightFont=*,ItalicFont=*i,BoldItalicFont=*z,SmallCapsFeatures={Letters=SmallCaps}]{georgia} % possible fonts: texgyretermes, texgyrepagella, texgyreschola, texgyrebonum, lmroman10, xits
+\setsansfont[Path=templateresources/,Ligatures=TeX,BoldFont=*bold,SmallCapsFeatures={Letters=SmallCaps}]{KorolevLiU} % possible fonts: texgyreheros, texgyreadventor
+\setmonofont[Ligatures=TeX,Extension=.otf,BoldFont=*-bold,UprightFont=*-regular,ItalicFont=*-italic,BoldItalicFont=*-bolditalic,SmallCapsFeatures={Letters=SmallCaps}]{texgyrecursor} % möjliga typsnitt: texgyrecursor
 
 
 % This template uses the geometry package to set the dimensions of the poster.
@@ -39,7 +52,9 @@
 }
 
 
-% The template defines some colors, available colors are:
+% The template defines colors based on the LiU color scheme.
+% Change "poster" to "LiU" to get the original color palette.
+% Available colors are:
 % - postercyan
 % - posteryellow
 % - posterblue
@@ -75,16 +90,16 @@
 
 \title{Title of the Poster}
 \author{Authors of the Poster}
-\affiliation{Division..., Department..., University..., etc.}
 
-\leftlogo{example-image-a}
-\rightlogo{example-image-b}
+% Modify the default affiliation if necessary.
+% Uncomment and adjust the line below:
+% \affiliation{Division, Department, University, etc.}
 
 % The scale of the logos adjusted using these factors.
 % \renewcommand{\leftlogoscalingfactor}{1}
 % \renewcommand{\rightlogoscalingfactor}{1}
 
-% To use this template, define the number of columns, 
+% To use this template, define the number of columns,
 % and in these columns, place the content inside boxes.
 
 \begin{document}
@@ -93,7 +108,7 @@
 % ======================= Column I =================================
 % ==================================================================
 % ==================================================================
-% Columns are created by the postercolumn environment. 
+% Columns are created by the postercolumn environment.
 % The number of columns is defined in the documentclass.
 \begin{postercolumn}
 	% Boxes are created with the posterbox environment:
@@ -113,6 +128,7 @@
 	\begin{posterbox}{XXX}
 		\lipsum[2-3]
 	\end{posterbox}
+	\wasplogobox
 \end{postercolumn}
 % IMPORTANT: To ensure proper functionality, there should not be a paragraph break here (i.e., no two new lines).
 % You can have commented content here since "%" suppresses the blank line.

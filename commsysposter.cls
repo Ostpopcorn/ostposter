@@ -1,11 +1,11 @@
 %%
-%% This is file `ostposter.cls'
+%% This is file `commsysposter.cls'
 %%
 %% Created by Adrian Edin 2024-10-22
 %%
 %%
 
-\ProvidesClass{ostposter}[2024/10/22 v1.0 ostposter class]
+\ProvidesClass{commsysposter}[2024/10/22 v1.0 commsysposter class]
 
 \LoadClass{article}
 
@@ -75,7 +75,7 @@
 	\csp@framestrue
 }
 
-\DeclareOption*{\PackageWarning{ostposter}{Unknown Option \CurrentOption}}
+\DeclareOption*{\PackageWarning{commsysposter}{Unknown Option \CurrentOption}}
 \ExecuteOptions{portrait,a3,3col}
 \ProcessOptions\relax
 
@@ -99,18 +99,26 @@
 
 
 
+\definecolor{LiUblue}{HTML}{00B3E7}
+\definecolor{LiUblack}{HTML}{231F20}
+\definecolor{LiUturquoise}{HTML}{0CC7D3}
+\definecolor{LiUgreen}{HTML}{00CFB6}
+\definecolor{LiUorange}{HTML}{FF6442}
+\definecolor{LiUpurple}{HTML}{8781D3}
+\definecolor{LiUyellow}{HTML}{FCF05F}
+\definecolor{LiUgrey}{HTML}{687F91}
 
-\definecolor{postercyan}{HTML}{adf8d7}
-\definecolor{posteryellow}{HTML}{fff5ba}
-\definecolor{posterblue}{HTML}{6eb6ff}
-\definecolor{posterpurple}{HTML}{b6b9ff}
-\definecolor{posterred}{HTML}{ffbebc}
-\definecolor{postergrey}{HTML}{e2e2e2}
-\definecolor{postergreen}{HTML}{bdfcc3}
-\definecolor{posterorange}{HTML}{ffcbc0}
+\colorlet{postercyan}{LiUturquoise!20}
+\colorlet{posteryellow}{LiUyellow!20}
+\colorlet{posterblue}{LiUblue!20}
+\colorlet{posterpurple}{LiUpurple!20}
+\colorlet{posterred}{LiUorange!50}
+\colorlet{postergrey}{LiUgrey!20}
+\colorlet{postergreen}{LiUgreen!30}
+\colorlet{posterorange}{LiUorange!20}
 
-\colorlet{titlecolor}{black}
-\colorlet{backgroundcolor}{posterblue!25}
+\colorlet{titlecolor}{LiUblack}
+\colorlet{backgroundcolor}{LiUblue!5}
 %\colorlet{backgroundcolor}{white}
 \pagecolor{backgroundcolor}
 \colorlet{posterboxlinecolor}{black}
@@ -118,8 +126,8 @@
 % Creating commands for setting title author and affiliation
 \newcommand{\postertitle}{}
 \newcommand{\posterauthor}{}
-\newcommand{\posteraffiliation}{Div.\ of ..., Dept.\ of ...,
-	University ..., The world.}
+\newcommand{\posteraffiliation}{Div.\ of Communication Systems, Dept.\ of Electrical Engineering (ISY),
+	Link\"{o}ping University (LiU), \\581 83 Link\"oping, Sweden}
 
 \renewcommand{\title}[1]{\renewcommand{\postertitle}{#1}}
 \renewcommand{\author}[1]{\renewcommand{\posterauthor}{#1}}
@@ -127,8 +135,8 @@
 \newcommand{\affiliation}[1]{\renewcommand{\posteraffiliation}{#1}}
 
 
-\newcommand{\csp@leftlogo}{example-image}
-\newcommand{\csp@rightlogo}{example-image}
+\newcommand{\csp@leftlogo}{templateresources/LiUlogo.eps}
+\newcommand{\csp@rightlogo}{templateresources/CommSyslogo.eps}
 
 \newcommand{\leftlogo}[1]{\renewcommand{\csp@leftlogo}{#1}}
 \newcommand{\rightlogo}[1]{\renewcommand{\csp@rightlogo}{#1}}
@@ -340,6 +348,15 @@
 	%
 	%\vskip -\baselineskip\relax%
 	%\the\baselineskip, \the\dimexpr2mm
+	}
+
+
+\newcommand{\wasplogobox}
+{\begin{posterbox}[gray]{}
+		\centering
+		\vspace*{2mm}
+		\includegraphics[width=0.9\textwidth,height=1cm,keepaspectratio]{templateresources/waspwhite.eps}\vspace*{2mm}
+	\end{posterbox}
 	}
 
 
