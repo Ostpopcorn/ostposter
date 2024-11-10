@@ -1,0 +1,154 @@
+\documentclass[a3,2col]{ostposter}
+%\documentclass[a3,2col,centertitle,landscape]{ostposter}
+
+% There are several options that can be passed to the class:
+% - a4, a3, a2, a1, a0: Sets the paper size. (default: 3col)
+%   Note that often you may want to create an A3 poster and then scale it up to A1 or A0.
+% - landscape/portrait: Defines whether the poster uses landscape or portrait orientation (default: portrait).
+% - ?col: Sets the number of columns to ? in the root of the poster. (default: 3 columns)
+% - centertitle: Centers the poster box titles horizontally.
+% - showframes: Displays the bounding boxes of all columns and poster areas. Useful for creating advanced layouts.
+
+% This is needed for LuaLaTeX to convert eps to pdf.
+\usepackage{epstopdf}
+
+% For old, non-UFT8, compilers.
+\usepackage[utf8]{inputenc}
+
+
+% This template uses the geometry package to set the dimensions of the poster.
+% If you wish to change the margins, you can use:
+% \geometry{top=2cm, bottom=2cm, right=2cm, left=2cm}
+% If necessary, the page size can also be adjusted before \begin{document}.
+
+% The template exposes a few additional dimensions to change the appearance of the poster.
+% For example, if there are many authors or a long title, the height of the header can be adjusted:
+% \addtolength{\posterheaderheight}{10mm}
+
+% The template defines a fixed distance between columns, which can be adjusted:
+\setlength{\postercolumnseparation}{2mm}
+
+% The distance between the header and the start of the content can be adjusted here:
+\setlength{\postertitletocontentmargin}{1mm}
+
+% The boxes are created using the mdframed package.
+% If you want to inject extra arguments to style them differently,
+% you can redefine the style "posterstyle" as follows:
+\mdfdefinestyle{posterstyle}{
+	% Enter your key-value arguments here.
+}
+
+
+% The template defines some colors, available colors are:
+% - postercyan
+% - posteryellow
+% - posterblue
+% - posterpurple
+% - posterred
+% - postergrey
+% - postergreen
+% - posterorange.
+
+
+\usepackage{tikz}
+% This template works great with TikZ and externalization.
+% There is a known bug where the box background disappears behind an
+% externalized element. If externalization is disabled, the background
+% reappears.
+\usetikzlibrary{external}
+
+
+% Including PGF for the demo figure to work.
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{external}
+
+% Enable TikZ externalization.
+% Uncomment the following line to activate it:
+% \tikzexternalize
+
+% English hyphenation settings
+\usepackage[english]{babel}
+
+% For generating dummy text
+\usepackage{lipsum}
+
+\title{Title of the Poster}
+\author{Authors of the Poster}
+
+% Modify the default affiliation if necessary.
+% Uncomment and adjust the line below:
+% \affiliation{Division, Department, University, etc.}
+
+% To use this template, define the number of columns, 
+% and in these columns, place the content inside boxes.
+
+\begin{document}
+% ==================================================================
+% ==================================================================
+% ======================= Column I =================================
+% ==================================================================
+% ==================================================================
+% Columns are created by the postercolumn environment. 
+% The number of columns is defined in the documentclass.
+\begin{postercolumn}
+	% Boxes are created with the posterbox environment:
+	% Syntax:
+	% \begin{posterbox}[color of the box]{title}
+	%    content...
+	% \end{posterbox}
+	\begin{posterbox}[posterblue]{XX}
+		\lipsum[1]
+	\end{posterbox}
+	\begin{posterbox}[posteryellow]{Boxbox}
+		Test
+	\end{posterbox}
+	\begin{posterbox}[posterorange]{This is a very boring box, but this shows that the title can be arbitrarily long and will wrap to the next line}
+		Nothing to see here.
+	\end{posterbox}
+	\begin{posterbox}{XXX}
+		\lipsum[2-3]
+	\end{posterbox}
+\end{postercolumn}
+% IMPORTANT: To ensure proper functionality, there should not be a paragraph break here (i.e., no two new lines).
+% You can have commented content here since "%" suppresses the blank line.
+%
+% ==================================================================
+% ==================================================================
+% ======================= Column II ================================
+% ==================================================================
+% ==================================================================
+\begin{postercolumn}
+	\begin{posterbox}[postergreen]{Boxbox}
+		Test
+	\end{posterbox}
+	\begin{posterbox}{}
+		This has no title!
+	\end{posterbox}
+	\begin{posterbox}[posterpurple]{Important}
+		\lipsum[3-4]
+	\end{posterbox}
+	\begin{posterbox}{A TikZ figure}
+		This figure can be externalized with any\footnote{The color of the background will not be shown. However, when externalization is disabled, the color returns.}
+
+		\begin{tikzpicture}
+			\begin{axis}[
+				axis y line=center,
+				axis x line=middle,
+				xmax=10,xmin=-1,
+				ymin=-5,ymax=10,
+				xlabel=$x$, ylabel=$y$,
+				xtick={-10,...,10},
+				ytick={-10,...,10},
+				width=\textwidth,
+				anchor=center,
+				]
+				\addplot {x^2 - 7*x + 10};
+			\end{axis}
+		\end{tikzpicture}
+	\end{posterbox}
+	\begin{posterbox}{References}
+		Test
+	\end{posterbox}
+\end{postercolumn}
+\end{document}
