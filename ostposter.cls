@@ -127,12 +127,14 @@
 \newcommand{\affiliation}[1]{\renewcommand{\posteraffiliation}{#1}}
 
 
-\newcommand{\csp@leftlogo}{example-image-a}
-\newcommand{\csp@rightlogo}{example-image-b}
+\newcommand{\csp@leftlogo}{example-image}
+\newcommand{\csp@rightlogo}{example-image}
 
 \newcommand{\leftlogo}[1]{\renewcommand{\csp@leftlogo}{#1}}
 \newcommand{\rightlogo}[1]{\renewcommand{\csp@rightlogo}{#1}}
 
+\newcommand{\leftlogoscalingfactor}{1}
+\newcommand{\rightlogoscalingfactor}{1}
 
 \newsavebox{\csp@titlecontent}
 \newsavebox{\csp@postercontent}
@@ -298,20 +300,22 @@
 		\addtolength{\csp@headerwidth}{0mm}%
 	\fi%
 	\pagestyle{empty}%
+	\newlength{\csp@headerlogoheight}\setlength{\csp@headerlogoheight}{0.9\posterheaderheight}%
+	\newlength{\csp@headerlogowidth}\setlength{\csp@headerlogowidth}{0.15\csp@headerwidth}%
 	\begin{lrbox}{\csp@titlecontent}%
-		\begin{minipage}{0.15\csp@headerwidth}%
-			\centering \includegraphics[height=0.9\posterheaderheight,width=\textwidth,keepaspectratio]{\csp@leftlogo}
+		\begin{minipage}[]{\csp@headerlogowidth}%
+			\centerline{\includegraphics[height=\leftlogoscalingfactor\csp@headerlogoheight,width=\leftlogoscalingfactor\csp@headerlogowidth,keepaspectratio]{\csp@leftlogo}}
 		\end{minipage}%
 		\hfill
 		\begin{minipage}{0.7\csp@headerwidth}\sf
 			\centering \Huge \textbf{\textcolor{titlecolor}\postertitle} \\
 			\vspace{0.3cm}
 			\Large \textbf{\textcolor{titlecolor}\posterauthor}\\
-			\normalsize \textcolor{titlecolor}\posteraffiliation
+			\normalsize \textcolor{titlecolor}\posteraffiliation\\
 		\end{minipage}%
 		\hfill
-		\begin{minipage}{0.15\csp@headerwidth}
-			\centering \includegraphics[height=0.9\posterheaderheight,width=\textwidth,keepaspectratio]{\csp@rightlogo}
+		\begin{minipage}{\csp@headerlogowidth}
+			\centerline{\includegraphics[height=\rightlogoscalingfactor\csp@headerlogoheight,width=\rightlogoscalingfactor\csp@headerlogowidth,keepaspectratio]{\csp@rightlogo}}
 		\end{minipage}%
 	\end{lrbox}%
 	\hfill%
