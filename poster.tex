@@ -31,12 +31,12 @@
 % The distance between the header and the start of the content can be adjusted here:
 \setlength{\postertitletocontentmargin}{1mm}
 
-% The boxes are created using the mdframed package.
+% The boxes are created using the tcolorbox package.
 % If you want to inject extra arguments to style them differently,
-% you can redefine the style "posterstyle" as follows:
-\mdfdefinestyle{posterstyle}{
+% you can append keys to the style "posterstyle" as follows:
+\tcbset{posterstyle/.style={
 	% Enter your key-value arguments here.
-}
+}}
 
 
 % The template defines some colors, available colors are:

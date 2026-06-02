@@ -94,8 +94,7 @@
 \RequirePackage{geometry}
 \RequirePackage{parskip}
 \RequirePackage{xcolor,graphicx}
-\RequirePackage[framemethod=TikZ]{mdframed}
-\usetikzlibrary{shadows}
+\RequirePackage[most]{tcolorbox}
 
 
 
@@ -108,6 +107,18 @@
 \definecolor{postergrey}{HTML}{e2e2e2}
 \definecolor{postergreen}{HTML}{bdfcc3}
 \definecolor{posterorange}{HTML}{ffcbc0}
+
+% Tone the box colours down towards white. \csp@boxtint is the percentage of
+% the original colour kept (lower = paler / closer to white).
+\newcommand{\csp@boxtint}{30}
+\colorlet{postercyan}{postercyan!\csp@boxtint!white}
+\colorlet{posteryellow}{posteryellow!\csp@boxtint!white}
+\colorlet{posterblue}{posterblue!\csp@boxtint!white}
+\colorlet{posterpurple}{posterpurple!\csp@boxtint!white}
+\colorlet{posterred}{posterred!\csp@boxtint!white}
+\colorlet{postergrey}{postergrey!\csp@boxtint!white}
+\colorlet{postergreen}{postergreen!\csp@boxtint!white}
+\colorlet{posterorange}{posterorange!\csp@boxtint!white}
 
 \colorlet{titlecolor}{black}
 \colorlet{backgroundcolor}{posterblue!25}
@@ -217,6 +228,17 @@
 			}{%
 			\end{minipage}%
 		\end{lrbox}%
+	% A fixed-height [t] minipage sets its baseline at the first box's baseline,
+	% so columns whose first boxes differ in height get different heights above
+	% the baseline. Placed side by side they share one baseline and the galley
+	% line grows to max(height)+max(depth) -- much taller than the area height --
+	% which then will not fit under the header and spills onto a second page.
+	% Re-reference every column to a common baseline at its very top
+	% (height 0, depth = area height) so all columns align and the line is
+	% exactly the area height.
+	\setbox\csp@postercolumncontent=\hbox{%
+		\raisebox{-\ht\csp@postercolumncontent}[\z@][\csp@@currentareaheight]{%
+			\usebox{\csp@postercolumncontent}}}%
 	\ifcsp@frames%
 		\setlength{\fboxrule}{1pt}%
 		\setlength{\fboxsep}{-\fboxrule}%
@@ -226,46 +248,61 @@
 	\ifcsp@frames}\fi%
 }
 
-\mdfdefinestyle{posterstyle}{
-}
+% Empty, user-overridable style. Users can append keys via
+% \tcbset{posterstyle/.style={...}} in their document preamble.
+\tcbset{posterstyle/.style={}}
 
-\mdfdefinestyle{csp@framestyle}{
-	linecolor=white!20!black,
-	linewidth=0.6pt,
-	backgroundcolor=gray!40,
-	shadow=true,
-	shadowsize = 6pt,
-	%backgroundcolor=red!10,
-	roundcorner=4pt,
-	skipbelow = 0mm,
-	innerbottommargin=3mm,
-	innerleftmargin=3mm,
-	innerrightmargin=3mm,
-	leftmargin = \dimexpr (\postercolumnseparation)/2,
-	rightmargin = \dimexpr (\postercolumnseparation)/2
-}
+% Main appearance of a posterbox, ported from the old mdframed csp@framestyle.
+\tcbset{csp@framestyle/.style={
+	enhanced,
+	colframe=white!20!black,
+	boxrule=0.8pt,
+	arc=4pt,
+	% boxsep=0pt so left/right/top/bottom are the only content padding,
+	% matching the old mdframed inner margins exactly (avoids extra height).
+	boxsep=0pt,
+	left=3mm,
+	right=3mm,
+	top=3mm,
+	bottom=3mm,
+	% Box separation is handled by the \vfill in the posterbox environment,
+	% so the box's own vertical skips must be zero (cf. mdframed skipbelow=0mm).
+	before skip=0mm,
+	after skip=0mm,
+	% Drop shadow mirroring the old mdframed shadow=true, shadowsize=6pt.
+	drop fuzzy shadow=black!50!white,
+	% Outer left/right margin of half the column separation: tcolorbox has no
+	% direct outer-margin key, so shrink the box and centre it in the column.
+	width=\dimexpr\linewidth-\postercolumnseparation\relax,
+	enlarge left by=\dimexpr(\postercolumnseparation)/2\relax,
+}}
 
 \NewDocumentEnvironment{posterbox}{O{white} m O{}}{%
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternaldisable\fi%
 	% Only add a header it is non-empty
 	\ifstrempty{#2}{%
-	\begin{mdframed}[style=csp@framestyle, style=posterstyle,
-		innertopmargin=3mm,
-		backgroundcolor=#1,
-		#3]%
+	\begin{tcolorbox}[csp@framestyle,
+		colback=#1,
+		#3,
+		posterstyle]%
 	}{
-	\begin{mdframed}[style=csp@framestyle, style=posterstyle,
-		backgroundcolor=#1,
-		innertopmargin=0mm,
-		frametitleaboveskip = 2mm,
-		frametitle=\boxtitle{#2},
-		#3]%
+	% The title is typeset as the first line of the body rather than via
+	% tcolorbox's title mechanism. A separate title region (colbacktitle) abuts
+	% the body fill and many PDF viewers draw a hairline seam where two
+	% same-coloured fills meet; keeping a single fill avoids that line entirely.
+	\begin{tcolorbox}[csp@framestyle,
+		colback=#1,
+		#3,
+		posterstyle]%
+		{\ifcsp@centertitle\centering\fi\boxtitle{#2}\par}%
+		% Breathing room between the title and the body content.
+		\vspace{2pt}%
 	}
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternalenable\fi%
 	\ignorespaces
 	}{%
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternaldisable\fi%
-	\end{mdframed}%[\posterboxseparator]
+	\end{tcolorbox}%[\posterboxseparator]
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternalenable\fi%
 	\vfill%
 	\ignorespacesafterend%
@@ -303,9 +340,9 @@
 
 
 \AtBeginDocument{%
-	\ifcsp@centertitle%
-		\mdfsetup{frametitlealignment=\center}%
-	\fi%
+	% Box-title centering (centertitle option) is applied directly in the
+	% posterbox environment via \ifcsp@centertitle, since the title is part of
+	% the box body rather than a tcolorbox title.
 	\setlength{\csp@headerwidth}{\dimexpr \textwidth}%
 	\ifGm@landscape % Check if geometry is loaded with landscape flag
 		\addtolength{\csp@headerwidth}{-30.0mm}%
