@@ -148,6 +148,16 @@
 \newlength{\csp@@currentareawidth}
 \newlength{\csp@@currentcolumnwidth}
 
+% Columns are laid out as side-by-side boxes inside a single horizontal
+% "galley" paragraph. A stray \par (from a blank line between columns) would
+% end that paragraph and wrap the next column onto a new line. To make the
+% layout independent of how many blank lines appear between environments, we
+% neutralize \par in the top-level galley: blank lines then become harmless.
+% Box content is unaffected because minipage/\@parboxrestore restores a real
+% \par locally, and we re-arm a real \par at \AtEndDocument so the final page
+% can be shipped out (otherwise \newpage trips on \prevdepth while in hmode).
+\newcommand\csp@neutralizepar{\let\par\relax}
+\newcommand\csp@restorepar{\let\par\@@par}
 
 % First command is number of columns
 % Second is the fractional width of parent
@@ -170,7 +180,13 @@
 	\begin{lrbox}{\csp@postercontent}
 		\begin{minipage}[t][\csp@@currentareaheight]{\csp@@currentareawidth}%
 			\ignorespaces%
+			% Child columns sit side by side in this minipage, so make blank
+			% lines between them harmless here too (the minipage's
+			% \@parboxrestore has just reset \par to the real one).
+			\csp@neutralizepar%
 	}{
+			% Close the column row before the minipage ends.
+			\csp@restorepar\par%
 		\end{minipage}%
 	\end{lrbox}%
 		% Don't externalize these parts ragardless
@@ -190,10 +206,8 @@
 
 
 \NewDocumentEnvironment{postercolumn}{o}{%
-	\IfValueTF{#1}{%
+	\IfValueT{#1}{%
 		\setlength{\csp@@columnwidth}{\dimexpr (#1\csp@@currentareawidth)\relax}%
-	}{%
-		% This is already set
 	}%
 	% \setlength{\csp@@columnwidth}{\dimexpr (\textwidth)/\number\csp@columnsnum\relax}%
 	\setlength{\csp@@currentareawidth}{\csp@@columnwidth}%
@@ -210,7 +224,6 @@
 	\fi%
 	\usebox{\csp@postercolumncontent}%
 	\ifcsp@frames}\fi%
-	\ignorespacesafterend%
 }
 
 \mdfdefinestyle{posterstyle}{
@@ -340,7 +353,12 @@
 	%
 	%\vskip -\baselineskip\relax%
 	%\the\baselineskip, \the\dimexpr2mm
+	% Make the column galley immune to blank lines between environments.
+	\csp@neutralizepar%
 	}
+
+% Re-arm a real \par so the final page can be shipped out.
+\AtEndDocument{\csp@restorepar\par}
 
 
 \endinput
