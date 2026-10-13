@@ -94,7 +94,10 @@
 \RequirePackage{geometry}
 \RequirePackage{parskip}
 \RequirePackage{xcolor,graphicx}
-\RequirePackage[most]{tcolorbox}
+% Only the skins library is needed (enhanced, drop fuzzy shadow). [most] also
+% loads libraries that create PDF form objects at load time, which LuaTeX
+% records as extra "page 1" entries in the SyncTeX file and breaks SyncTeX.
+\RequirePackage[skins]{tcolorbox}
 
 
 
