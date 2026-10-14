@@ -9,7 +9,6 @@
 
 \LoadClass{article}
 
-% \newif\ifdraft
 \newif\ifcsp@centertitle
 \newif\ifcsp@frames
 \newlength{\postercolumnseparation}
@@ -41,9 +40,11 @@
 
 \DeclareOption{a0b}{
 	\PassOptionsToPackage{papersize={91.51cm,120cm}}{geometry}
+	\setlength{\postercolumnseparation}{6mm}
 }
 \DeclareOption{a0}{
 	\PassOptionsToPackage{a0paper}{geometry}
+	\setlength{\postercolumnseparation}{6mm}
 }
 \DeclareOption{a1}{
 	\PassOptionsToPackage{a1paper}{geometry}
@@ -75,12 +76,12 @@
 	\csp@framestrue
 }
 
-\DeclareOption*{\PackageWarning{ostposter}{Unknown Option \CurrentOption}}
+\DeclareOption*{\ClassWarning{ostposter}{Unknown Option \CurrentOption}}
 \ExecuteOptions{portrait,a3,3col}
 \ProcessOptions\relax
 
-\newlength{\csp@bottommargin}\setlength{\csp@bottommargin}{10mm}% 10mm
-\newlength{\csp@topmargin}\setlength{\csp@topmargin}{8mm}%{5mm}
+\newlength{\csp@bottommargin}\setlength{\csp@bottommargin}{10mm}
+\newlength{\csp@topmargin}\setlength{\csp@topmargin}{8mm}
 \newlength{\postertitletocontentmargin}\setlength{\postertitletocontentmargin}{4mm}
 
 \PassOptionsToPackage{hmargin=1cm}{geometry}
@@ -153,7 +154,6 @@
 \newsavebox{\csp@titlecontent}
 \newsavebox{\csp@postercontent}
 \newsavebox{\csp@postercolumncontent}
-% \newsavebox{\posterboxcontent}
 
 \newlength{\csp@@columnwidth}
 \newlength{\csp@@totalareaheight}
@@ -178,15 +178,11 @@
 % Third is the fractional height of parent
 \NewDocumentEnvironment{posterarea}{O{3} o o}{%
 	\def\csp@columnsnum{#1}%
-	\IfValueTF{#2}{%
+	\IfValueT{#2}{%
 		\setlength{\csp@@currentareawidth}{\dimexpr #2\csp@@currentareawidth}%
-	}{%
-		% \setlength{\csp@@currentareawidth}{\dimexpr \csp@@totalareawidth}%
 	}%
-	\IfValueTF{#3}{%
+	\IfValueT{#3}{%
 		\setlength{\csp@@currentareaheight}{\dimexpr #3\csp@@currentareaheight}%
-	}{%
-		% \setlength{\csp@@currentareaheight}{\dimexpr \csp@@totalareaheight}%
 	}%
 	% Set the standard width of the columns here based on the number of columns given
 	\setlength{\csp@@columnwidth}{\dimexpr (\csp@@currentareawidth)/\number\csp@columnsnum\relax}%
@@ -203,19 +199,18 @@
 			\csp@restorepar\par%
 		\end{minipage}%
 	\end{lrbox}%
-		% Don't externalize these parts ragardless
+		% Never externalize the poster layout itself.
 		\ifcsname tikz@library@external@loaded\endcsname\tikzexternaldisable\fi%
 		\ifcsp@frames%
 			\setlength{\fboxrule}{1pt}%
-			\setlength{\fboxsep}{-\fboxrule}% Just for this example
+			\setlength{\fboxsep}{-\fboxrule}%
 			\fbox{%
 		\fi%
 		\ignorespaces\usebox{\csp@postercontent}%
 		\ifcsp@frames}\fi%
 		\ifcsname tikz@library@external@loaded\endcsname\tikzexternalenable\fi%
 		\vskip -\baselineskip \relax\vfill
-		\par}
-		%\ignorespacesafterend}
+		\par\ignorespacesafterend}
 
 
 
@@ -223,7 +218,6 @@
 	\IfValueT{#1}{%
 		\setlength{\csp@@columnwidth}{\dimexpr (#1\csp@@currentareawidth)\relax}%
 	}%
-	% \setlength{\csp@@columnwidth}{\dimexpr (\textwidth)/\number\csp@columnsnum\relax}%
 	\setlength{\csp@@currentareawidth}{\csp@@columnwidth}%
 	\begin{lrbox}{\csp@postercolumncontent}%
 		\begin{minipage}[t][\csp@@currentareaheight]{\dimexpr\csp@@columnwidth}%
@@ -249,30 +243,31 @@
 	\fi%
 	\usebox{\csp@postercolumncontent}%
 	\ifcsp@frames}\fi%
+	% The line break after \end{postercolumn} is a space token in the
+	% horizontal column galley; swallow it so columns sum to the full width.
+	\ignorespacesafterend%
 }
 
 % Empty, user-overridable style. Users can append keys via
 % \tcbset{posterstyle/.style={...}} in their document preamble.
 \tcbset{posterstyle/.style={}}
 
-% Main appearance of a posterbox, ported from the old mdframed csp@framestyle.
+% Main appearance of a posterbox.
 \tcbset{csp@framestyle/.style={
 	enhanced,
 	colframe=white!20!black,
 	boxrule=0.8pt,
 	arc=4pt,
-	% boxsep=0pt so left/right/top/bottom are the only content padding,
-	% matching the old mdframed inner margins exactly (avoids extra height).
+	% boxsep=0pt so left/right/top/bottom are the only content padding.
 	boxsep=0pt,
 	left=3mm,
 	right=3mm,
 	top=3mm,
 	bottom=3mm,
 	% Box separation is handled by the \vfill in the posterbox environment,
-	% so the box's own vertical skips must be zero (cf. mdframed skipbelow=0mm).
+	% so the box's own vertical skips must be zero.
 	before skip=0mm,
 	after skip=0mm,
-	% Drop shadow mirroring the old mdframed shadow=true, shadowsize=6pt.
 	drop fuzzy shadow=black!50!white,
 	% Outer left/right margin of half the column separation: tcolorbox has no
 	% direct outer-margin key, so shrink the box and centre it in the column.
@@ -282,7 +277,7 @@
 
 \NewDocumentEnvironment{posterbox}{O{white} m O{}}{%
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternaldisable\fi%
-	% Only add a header it is non-empty
+	% Only add a title if it is non-empty
 	\ifstrempty{#2}{%
 	\begin{tcolorbox}[csp@framestyle,
 		colback=#1,
@@ -305,7 +300,7 @@
 	\ignorespaces
 	}{%
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternaldisable\fi%
-	\end{tcolorbox}%[\posterboxseparator]
+	\end{tcolorbox}%
 	\ifcsname tikz@library@external@loaded\endcsname\tikzexternalenable\fi%
 	\vfill%
 	\ignorespacesafterend%
@@ -321,10 +316,10 @@
 	\IfValueTF{#2}
 	{%
 	\begin{minipage}{\dimexpr #2}
-		\begin{minipage}{\dimexpr (#1#2)-0.01#2\relax}%
+		\begin{minipage}{\dimexpr #1\dimexpr #2\relax-0.01\dimexpr #2\relax\relax}%
 			#3
 		\end{minipage}\hfill%
-		\begin{minipage}{\dimexpr (#2-#1#2)-0.01#2\relax}%
+		\begin{minipage}{\dimexpr #2-#1\dimexpr #2\relax-0.01\dimexpr #2\relax\relax}%
 			#4
 		\end{minipage}%
 	\end{minipage}%
@@ -383,16 +378,13 @@
 	\hfill\null%
 	\vskip\postertitletocontentmargin%
 	% Set the poster area dimension
-	\setlength{\csp@@totalareaheight}{\dimexpr \textheight-\postertitletocontentmargin-\posterheaderheight-6pt\relax} % -2\baselineskip
+	\setlength{\csp@@totalareaheight}{\dimexpr \textheight-\postertitletocontentmargin-\posterheaderheight-6pt\relax}%
 	\setlength{\csp@@totalareawidth}{\textwidth}%
 	% Initiate the current measures too.
 	\setlength{\csp@@currentareaheight}{\csp@@totalareaheight}%
 	\setlength{\csp@@currentareawidth}{\csp@@totalareawidth}%
 	% Define columns size such that columns can be used directly
 	\setlength{\csp@@columnwidth}{\dimexpr (\csp@@currentareawidth)/\number\csp@columnsnum\relax}%
-	%
-	%\vskip -\baselineskip\relax%
-	%\the\baselineskip, \the\dimexpr2mm
 	% Make the column galley immune to blank lines between environments.
 	\csp@neutralizepar%
 	}
